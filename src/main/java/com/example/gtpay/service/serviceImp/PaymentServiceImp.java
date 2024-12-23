@@ -1,6 +1,7 @@
 package com.example.gtpay.service.serviceImp;
 
 import com.braintreepayments.http.HttpRequest;
+import com.example.gtpay.config_properties.NgrokConfigurationProperties;
 import com.example.gtpay.dto.request.PaymentUpDateRequest;
 import com.example.gtpay.dto.request.response.PaymentResponse;
 import com.example.gtpay.model.Customer;
@@ -41,28 +42,25 @@ import javax.swing.text.html.Option;
 //import javax.servlet.http.HttpServletRequest;
 import java.util.Optional;
 import java.util.UUID;
-
+@RequiredArgsConstructor
 @Service
 public class PaymentServiceImp {
 
     private final PaypalService paypalService;
+
+    private final NgrokConfigurationProperties configurationProperties;
     @Autowired
     private final TransactionReferenceRepo transactionRepo;
     @Autowired
     private final CustomerRepo customerRepo;
 
-    public PaymentServiceImp(PaypalService paypalService, TransactionReferenceRepo transactionRepo, CustomerRepo customerRepo) {
-        this.paypalService = paypalService;
-        this.transactionRepo = transactionRepo;
-        this.customerRepo = customerRepo;
-    }
 
     public String createPayment(Customer customer) throws UnKnowOtherDetails, ErrorCreatingPayment {
 
       Customer customer1=customerRepo.findByEmail(customer.getEmail());
         if (customer1==null){
-            return "/redirected:customerRegistration";
-            
+            return String.format("Redirected to customer registration %s/customer/customerRegistration", configurationProperties.getBasePath()) ;
+
         }
 
         try {
